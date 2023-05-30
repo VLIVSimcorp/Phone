@@ -2,18 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Components.BasicComponents
 {
     public class Battery
     {
-        public int size;
-        public int volume;
-        public Battery(int batterySize, int batteryVolume)
+        public static int Charge = 100;
+        Thread DischargeThread = new Thread(Discharge);
+        static void Discharge()
         {
-            size = batterySize;
-            volume = batteryVolume;
+            Charge-=1;
+            Thread.Sleep(3000);
         }
+        public void StartBattery() 
+        {
+            DischargeThread.Start();
+        } 
     }
 }

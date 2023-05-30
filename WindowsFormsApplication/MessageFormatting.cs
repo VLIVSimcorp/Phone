@@ -19,20 +19,42 @@ namespace WindowsFormsApplication
         public MessageFormatting()
         {
             InitializeComponent();
-            _simCorpMobile = new SimCorpMobile(MessageBox);
+            _simCorpMobile = new SimCorpMobile(MessageBox1);
+        }
+        private void SearchByCriteria() 
+        {
+            List<SimCorpMessage> res = _simCorpMobile.SMSProvider.MessagesCach.ToList();
+            if (SearchByUserComboBox.SelectedItem != null) 
+            {
+                res = res.Where(x => x.User == SearchByUserComboBox.SelectedItem.ToString()).ToList();
+            }
+            if (!string.IsNullOrWhiteSpace(SearchByText.Text)) 
+            {
+                res = res.Where(x => x.Text == SearchByText.Text).ToList();
+            }
+            res = res.Where(x => x.ReceivingTime.Date >= FromDateTimePicker.Value.Date && x.ReceivingTime.Date <= ToDateTimePicker.Value.Date).ToList();
+            ShowMessages(res);
+        }
+        private void CheckUser()
+        {
+            var uniqueUsers = _simCorpMobile.SMSProvider.MessagesCach.Select(x => x.User).Distinct().ToList();
+            if (SearchByUserComboBox.Items.Count != uniqueUsers.Count) 
+            {
+                SearchByUserComboBox.Items.Clear();
+                SearchByUserComboBox.Items.AddRange(uniqueUsers.ToArray());
+            }
         }
         private void ShowMessages(List<SimCorpMessage> messages) 
         {
             MessagesListView.Clear();
             foreach (SimCorpMessage message in messages)
             {
-                MessagesListView.Items.Add(new ListViewItem(new[] { message.User, message.Text}));
+                MessagesListView.Items.Add(new ListViewItem(new[] {message.User, message.Text}));
             }
         }
         private void MessageFormatting_Load(object sender, EventArgs e)
         {
             FormattingComboBox.SelectedItem = FormattingComboBox.Items[0];
-            MessageTimer.Start();
         }
 
         private void FormattingComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -56,25 +78,40 @@ namespace WindowsFormsApplication
                     break;
             }
         }
-
-        private void MessageTimer_Tick(object sender, EventArgs e)
-        {
-            _simCorpMobile.SMSProvider.SendMessage(new SimCorpMessage("User 1", "Text 1"));
-        }
-
         private void MessageFormatting_FormClosing(object sender, FormClosingEventArgs e)
         {
-            MessageTimer.Stop();
+            
         }
 
         private void SendMessage_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(UserTextBox.Text) && !string.IsNullOrWhiteSpace(MessageTextBox.Text)) 
+            if (_simCorpMobile.SMSProvider.IsStoped)
             {
-                _simCorpMobile.SMSProvider.SendMessage(new SimCorpMessage(UserTextBox.Text, MessageTextBox.Text));
-                return;
+                _simCorpMobile.SMSProvider.Start();
             }
-            MessageBox.Show("Fields must be filled", "No user or message", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            else 
+            {
+                _simCorpMobile.SMSProvider.Stop();
+            }
+        }
+        private void SearchByUserComboBox_Leave(object sender, EventArgs e)
+        {
+            SearchByCriteria();
+        }
+
+        private void SearchByText_Leave(object sender, EventArgs e)
+        {
+            SearchByCriteria();
+        }
+
+        private void FromDateTimePicker_Leave(object sender, EventArgs e)
+        {
+            SearchByCriteria();
+        }
+
+        private void ToDateTimePicker_Leave(object sender, EventArgs e)
+        {
+            SearchByCriteria();
         }
     }
 }

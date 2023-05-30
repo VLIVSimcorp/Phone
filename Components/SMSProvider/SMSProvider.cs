@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Components.Provider
@@ -13,25 +14,50 @@ namespace Components.Provider
         private delegate string FormatDelegate(string text);
         private FormatDelegate Formatter = new FormatDelegate(StartWithTimeFormat);
         public delegate void MessageFormatDelegate(MessageFormat messageFormat);
-        public event SMSRecievedDelegate SMSReceived;
+        public static event SMSRecievedDelegate SMSReceived;
         public event MessageFormatDelegate SetMessageFormatEvent;
         private readonly IOutput _output;
         public List<SimCorpMessage> MessagesCach = new List<SimCorpMessage>();
+        private static List<string> Users = new List<string> { "User 1", "User 2", "User 3", "User 4" };
+        Thread MessageGeneratorThread = new Thread(GenerateMessage);
+        public bool IsStoped => _isStoped;
+        public static bool _isStoped = true;
         public SMSProvider(IOutput output)
         {
             _output = output;
             SMSReceived += OnSMSReceived;
             SetMessageFormatEvent += OnSetMessageFormat;
+            MessageGeneratorThread = new Thread(GenerateMessage);
+            MessageGeneratorThread.Start();
+        }
+        public void Start() 
+        {
+            _isStoped = false;
+        }
+        public void Stop()
+        {
+            _isStoped = true;
+        }
+        static void GenerateMessage()
+        {
+            while(true)
+            {
+                if (!_isStoped)
+                {
+                    SendMessage(new SimCorpMessage(Users[new Random().Next(0, Users.Count() - 1)], "Message"));
+                    Thread.Sleep(1000);
+                }
+            }
         }
         private void OnSMSReceived(SimCorpMessage message)
         {
             MessagesCach.Add(message);
-            if (Formatter != null)
+            /*if (Formatter != null)
             {
                 _output.WriteLine(Formatter($"{message}{Environment.NewLine}"));
                 return;
             }
-            _output.WriteLine(message.ToString());
+            _output.WriteLine(message.ToString());*/
         }
         private void OnSetMessageFormat(MessageFormat messageFormat)
         {
@@ -74,7 +100,7 @@ namespace Components.Provider
         {
             return message;
         }
-        public void SendMessage(SimCorpMessage message)
+        public static void SendMessage(SimCorpMessage message)
         {
             SMSReceived(message);
         }

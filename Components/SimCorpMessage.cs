@@ -19,7 +19,7 @@ namespace Components
         }
         public override string ToString() 
         {
-            return $"User: Text";
+            return $"{User}: {Text}";
         }
     }
 }
