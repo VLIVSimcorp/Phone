@@ -23,6 +23,8 @@ namespace Components.Phones
 
         public override SMSProvider SMSProvider => _SMSProvider;
 
+        public override Battery Battery => _battery;
+        private readonly Battery _battery;
         private readonly OLEDScreen _vOLEDScreen = new OLEDScreen();
         private IPlayback _playbackComponent = new PhoneSpeaker();
         private readonly IOutput _output;
@@ -31,6 +33,7 @@ namespace Components.Phones
         {
             _output = new TextBoxOutput(textBoxOutput);
             _SMSProvider = new SMSProvider(_output);
+            _battery = new Battery();
         }
         public void SetPlaybackComponent(IPlayback playbackComponent)
         {

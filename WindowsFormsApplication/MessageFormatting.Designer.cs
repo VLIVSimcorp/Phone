@@ -43,6 +43,7 @@ namespace WindowsFormsApplication
             this.FromDateTimePicker = new System.Windows.Forms.DateTimePicker();
             this.ToDateTimePicker = new System.Windows.Forms.DateTimePicker();
             this.MessagesListView = new System.Windows.Forms.ListView();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
@@ -73,6 +74,7 @@ namespace WindowsFormsApplication
             this.tableLayoutPanel2.Controls.Add(this.tableLayoutPanel3, 0, 3);
             this.tableLayoutPanel2.Controls.Add(this.MessageBox1, 1, 3);
             this.tableLayoutPanel2.Controls.Add(this.tableLayoutPanel4, 1, 2);
+            this.tableLayoutPanel2.Controls.Add(this.progressBar1, 0, 1);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -224,6 +226,14 @@ namespace WindowsFormsApplication
             this.MessagesListView.UseCompatibleStateImageBehavior = false;
             this.MessagesListView.View = System.Windows.Forms.View.Tile;
             // 
+            // progressBar1
+            // 
+            this.progressBar1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.progressBar1.Location = new System.Drawing.Point(3, 59);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(391, 23);
+            this.progressBar1.TabIndex = 4;
+            // 
             // MessageFormatting
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -261,5 +271,6 @@ namespace WindowsFormsApplication
         private System.Windows.Forms.TextBox SearchByText;
         private System.Windows.Forms.DateTimePicker FromDateTimePicker;
         private System.Windows.Forms.DateTimePicker ToDateTimePicker;
+        private System.Windows.Forms.ProgressBar progressBar1;
     }
 }

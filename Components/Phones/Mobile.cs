@@ -16,6 +16,7 @@ namespace Components.Phones
         public abstract IPlayback PlaybackComponent { get; }
         public abstract IOutput Output { get; }
         public abstract SMSProvider SMSProvider { get; }
+        public abstract Battery Battery { get; }
         private void Show(IScreenImage screenImage)
         {
             Screen.Show(screenImage);
