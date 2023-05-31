@@ -20,6 +20,7 @@ namespace WindowsFormsApplication
         {
             InitializeComponent();
             _simCorpMobile = new SimCorpMobile(MessageBox1);
+            UpdateBatteryVolumeTimer.Start();
         }
         private void SearchByCriteria() 
         {
@@ -80,7 +81,8 @@ namespace WindowsFormsApplication
         }
         private void MessageFormatting_FormClosing(object sender, FormClosingEventArgs e)
         {
-            
+            UpdateBatteryVolumeTimer.Stop();
+            _simCorpMobile.Battery.SwitchOFF();
         }
 
         private void SendMessage_Click(object sender, EventArgs e)
@@ -112,6 +114,23 @@ namespace WindowsFormsApplication
         private void ToDateTimePicker_Leave(object sender, EventArgs e)
         {
             SearchByCriteria();
+        }
+
+        private void UpdateBatteryVolumeTimer_Tick(object sender, EventArgs e)
+        {
+            BatteryVolumeProgressBar.Value = _simCorpMobile.Battery.GetBatteryVolume();
+        }
+
+        private void ChargingButton_Click(object sender, EventArgs e)
+        {
+            if (!_simCorpMobile.Battery.IsCharging)
+            {
+                _simCorpMobile.Battery.StartCharging();
+            }
+            else 
+            {
+                _simCorpMobile.Battery.StopCharging();
+            }
         }
     }
 }

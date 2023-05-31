@@ -9,29 +9,36 @@ namespace Components.BasicComponents
 {
     public class Battery
     {
-        public static int Volume = 100;
+        /*public delegate int BateryVolumeDelegate(int volume);
+        public static event BateryVolumeDelegate SendBatteryVolumeEvent;*/
+        private static int Volume = 100;
         Thread DischargeThread = new Thread(Discharge);
         Thread ChargeThread = new Thread(Charge);
         private static object locker = new object();
-        private static bool IsCharging = false;
+        private static bool _isCharging = false;
+        public bool IsCharging => _isCharging;
         public Battery()
         {
             DischargeThread.Start();
             ChargeThread.Start();
         }
+        public int GetBatteryVolume()
+        {
+            return Volume;
+        }
         public void StartCharging()
         {
-            IsCharging = true;
+            _isCharging = true;
         }
         public void StopCharging() 
         {
-            IsCharging = false;
+            _isCharging = false;
         }
         static void Charge() 
         {
             while (true)
             {
-                if (IsCharging)
+                if (_isCharging)
                 {
                     lock (locker)
                     {
@@ -48,7 +55,7 @@ namespace Components.BasicComponents
         {
             while (true)
             {
-                if (!IsCharging)
+                if (!_isCharging)
                 {
                     lock (locker)
                     {
