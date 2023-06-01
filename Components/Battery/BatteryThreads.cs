@@ -1,36 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Threading;
 
-namespace Components.BasicComponents
+namespace Components.Battery
 {
-    public class Battery
+    public class BatteryThreads : BatteryBase
     {
-        /*public delegate int BateryVolumeDelegate(int volume);
-        public static event BateryVolumeDelegate SendBatteryVolumeEvent;*/
-        private static int Volume = 100;
+        private static int _volume = 100;
+        public override int Volume => _volume;
         Thread DischargeThread = new Thread(Discharge);
         Thread ChargeThread = new Thread(Charge);
         private static object locker = new object();
         private static bool _isCharging = false;
-        public bool IsCharging => _isCharging;
-        public Battery()
+        public override bool IsCharging => _isCharging;
+        public BatteryThreads()
         {
             DischargeThread.Start();
             ChargeThread.Start();
         }
-        public int GetBatteryVolume()
-        {
-            return Volume;
-        }
-        public void StartCharging()
+        public override void StartCharging()
         {
             _isCharging = true;
         }
-        public void StopCharging() 
+        public override void StartDischarging() 
         {
             _isCharging = false;
         }
@@ -42,9 +32,9 @@ namespace Components.BasicComponents
                 {
                     lock (locker)
                     {
-                        if (Volume < 100)
+                        if (_volume < 100)
                         {
-                            Volume += 1;
+                            _volume += 1;
                             Thread.Sleep(3000);
                         }
                     }
@@ -59,16 +49,16 @@ namespace Components.BasicComponents
                 {
                     lock (locker)
                     {
-                        if (Volume > 0)
+                        if (_volume > 0)
                         {
-                            Volume -= 1;
+                            _volume -= 1;
                             Thread.Sleep(3000);
                         }
                     }
                 }
             }
         }
-        public void SwitchOFF() 
+        public override void SwitchOFF() 
         {
             DischargeThread.Abort();
             ChargeThread.Abort();

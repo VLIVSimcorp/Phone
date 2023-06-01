@@ -1,5 +1,4 @@
 ﻿using System;
-using Components;
 namespace Phone
 {
     class Program

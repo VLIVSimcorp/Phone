@@ -42,11 +42,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BasicComponents\Battery.cs" />
+    <Compile Include="Battery\BatteryBase.cs" />
+    <Compile Include="Battery\BatteryTasks.cs" />
+    <Compile Include="Battery\BatteryThreads.cs" />
     <Compile Include="BasicComponents\Dynamic.cs" />
     <Compile Include="BasicComponents\Keyboard.cs" />
     <Compile Include="BasicComponents\Microphone.cs" />
     <Compile Include="BasicComponents\ScreenBase.cs" />
+    <Compile Include="CallProvider\Call.cs" />
+    <Compile Include="CallProvider\CallProvider.cs" />
+    <Compile Include="CallProvider\Contact.cs" />
     <Compile Include="Enums\Enums.cs" />
     <Compile Include="Interfaces\IOutput.cs" />
     <Compile Include="Interfaces\IPlayback.cs" />

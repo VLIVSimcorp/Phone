@@ -1,14 +1,11 @@
 ﻿using Components.BasicComponents;
+using Components.Battery;
+using Components.CallPROVIDER;
 using Components.Interfaces;
 using Components.Output;
 using Components.Provider;
 using Components.Screens.ColorfulScreens;
 using Components.Speakers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Components.Phones
@@ -23,17 +20,24 @@ namespace Components.Phones
 
         public override SMSProvider SMSProvider => _SMSProvider;
 
-        public override Battery Battery => _battery;
-        private readonly Battery _battery;
-        private readonly OLEDScreen _vOLEDScreen = new OLEDScreen();
-        private IPlayback _playbackComponent = new PhoneSpeaker();
+        public override BatteryBase Battery => _battery;
+
+        public override CallProvider CallProvider => _callProvider;
+
+        private readonly CallProvider _callProvider;
+        private readonly BatteryBase _battery;
+        private readonly OLEDScreen _vOLEDScreen;
+        private IPlayback _playbackComponent;
         private readonly IOutput _output;
         private readonly SMSProvider _SMSProvider;
         public SimCorpMobile(TextBox textBoxOutput)
         {
             _output = new TextBoxOutput(textBoxOutput);
-            _SMSProvider = new SMSProvider(_output);
-            _battery = new Battery();
+            _SMSProvider = new SMSProvider(_output, false);
+            _battery = new BatteryTasks();
+            _callProvider = new CallProvider();
+            _vOLEDScreen = new OLEDScreen();
+            _playbackComponent = new PhoneSpeaker();
         }
         public void SetPlaybackComponent(IPlayback playbackComponent)
         {

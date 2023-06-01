@@ -1,14 +1,9 @@
 ﻿using Components;
 using Components.Phones;
-using Components.Provider;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace WindowsFormsApplication
@@ -21,6 +16,7 @@ namespace WindowsFormsApplication
             InitializeComponent();
             _simCorpMobile = new SimCorpMobile(MessageBox1);
             UpdateBatteryVolumeTimer.Start();
+            _simCorpMobile.SMSProvider.UpdateUsersEvent += CheckUser;
         }
         private void SearchByCriteria() 
         {
@@ -36,21 +32,30 @@ namespace WindowsFormsApplication
             res = res.Where(x => x.ReceivingTime.Date >= FromDateTimePicker.Value.Date && x.ReceivingTime.Date <= ToDateTimePicker.Value.Date).ToList();
             ShowMessages(res);
         }
-        private void CheckUser()
+        private void CheckUser(List<SimCorpMessage> messages)
         {
-            var uniqueUsers = _simCorpMobile.SMSProvider.MessagesCach.Select(x => x.User).Distinct().ToList();
-            if (SearchByUserComboBox.Items.Count != uniqueUsers.Count) 
+            var uniqueUsers = messages.Select(x => x.User).Distinct().ToList();
+            if (SearchByUserComboBox.InvokeRequired) 
             {
-                SearchByUserComboBox.Items.Clear();
-                SearchByUserComboBox.Items.AddRange(uniqueUsers.ToArray());
+                SearchByUserComboBox.Invoke(new MethodInvoker(delegate 
+                {
+                    if (SearchByUserComboBox.Items.Count != uniqueUsers.Count)
+                    {
+                        SearchByUserComboBox.Items.Clear();
+                        SearchByUserComboBox.Items.AddRange(uniqueUsers.ToArray());
+                    };
+                }));
             }
+            
         }
         private void ShowMessages(List<SimCorpMessage> messages) 
         {
             MessagesListView.Clear();
-            foreach (SimCorpMessage message in messages)
+            var formatedMessages = _simCorpMobile.SMSProvider.GetFormatedMessages(messages);
+            foreach (var message in formatedMessages)
             {
-                MessagesListView.Items.Add(new ListViewItem(new[] {message.User, message.Text}));
+                ListViewItem newItem = new ListViewItem(message);
+                MessagesListView.Items.Add(newItem);
             }
         }
         private void MessageFormatting_Load(object sender, EventArgs e)
@@ -118,7 +123,7 @@ namespace WindowsFormsApplication
 
         private void UpdateBatteryVolumeTimer_Tick(object sender, EventArgs e)
         {
-            BatteryVolumeProgressBar.Value = _simCorpMobile.Battery.GetBatteryVolume();
+            BatteryVolumeProgressBar.Value = _simCorpMobile.Battery.Volume;
         }
 
         private void ChargingButton_Click(object sender, EventArgs e)
@@ -129,7 +134,26 @@ namespace WindowsFormsApplication
             }
             else 
             {
-                _simCorpMobile.Battery.StopCharging();
+                _simCorpMobile.Battery.StartDischarging();
+            }
+        }
+
+        private void CallsButton_Click(object sender, EventArgs e)
+        {
+            CallForm callForm = new CallForm();
+            callForm.UpdateCalls(_simCorpMobile.CallProvider.callCach);
+            callForm.Show();
+        }
+
+        private void GenerateCallsButton_Click(object sender, EventArgs e)
+        {
+            if (_simCorpMobile.CallProvider.IsStoped)
+            {
+                _simCorpMobile.CallProvider.Start();
+            }
+            else
+            {
+                _simCorpMobile.CallProvider.Stop();
             }
         }
     }

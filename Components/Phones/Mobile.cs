@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Components;
-using Components.BasicComponents;
+﻿using Components.BasicComponents;
+using Components.Battery;
+using Components.CallPROVIDER;
 using Components.Interfaces;
 using Components.Provider;
 
@@ -16,7 +12,8 @@ namespace Components.Phones
         public abstract IPlayback PlaybackComponent { get; }
         public abstract IOutput Output { get; }
         public abstract SMSProvider SMSProvider { get; }
-        public abstract Battery Battery { get; }
+        public abstract BatteryBase Battery { get; }
+        public abstract CallProvider CallProvider { get; }
         private void Show(IScreenImage screenImage)
         {
             Screen.Show(screenImage);

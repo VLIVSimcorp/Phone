@@ -35,16 +35,21 @@ namespace WindowsFormsApplication
             this.FormattingComboBox = new System.Windows.Forms.ComboBox();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.SendMessage = new System.Windows.Forms.Button();
+            this.ChargingButton = new System.Windows.Forms.Button();
+            this.CallsButton = new System.Windows.Forms.Button();
+            this.GenerateCallsButton = new System.Windows.Forms.Button();
             this.MessageBox1 = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.SearchByUserComboBox = new System.Windows.Forms.ComboBox();
             this.SearchByText = new System.Windows.Forms.TextBox();
             this.FromDateTimePicker = new System.Windows.Forms.DateTimePicker();
             this.ToDateTimePicker = new System.Windows.Forms.DateTimePicker();
-            this.MessagesListView = new System.Windows.Forms.ListView();
             this.BatteryVolumeProgressBar = new System.Windows.Forms.ProgressBar();
+            this.MessagesListView = new System.Windows.Forms.ListView();
             this.UpdateBatteryVolumeTimer = new System.Windows.Forms.Timer(this.components);
-            this.ChargingButton = new System.Windows.Forms.Button();
+            this.User = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.Message = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.Time = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
@@ -113,6 +118,8 @@ namespace WindowsFormsApplication
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel3.Controls.Add(this.SendMessage, 1, 1);
             this.tableLayoutPanel3.Controls.Add(this.ChargingButton, 0, 1);
+            this.tableLayoutPanel3.Controls.Add(this.CallsButton, 1, 0);
+            this.tableLayoutPanel3.Controls.Add(this.GenerateCallsButton, 0, 0);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 171);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
@@ -129,9 +136,42 @@ namespace WindowsFormsApplication
             this.SendMessage.Name = "SendMessage";
             this.SendMessage.Size = new System.Drawing.Size(190, 20);
             this.SendMessage.TabIndex = 2;
-            this.SendMessage.Text = "SEND";
+            this.SendMessage.Text = "Generate messages";
             this.SendMessage.UseVisualStyleBackColor = true;
             this.SendMessage.Click += new System.EventHandler(this.SendMessage_Click);
+            // 
+            // ChargingButton
+            // 
+            this.ChargingButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ChargingButton.Location = new System.Drawing.Point(3, 28);
+            this.ChargingButton.Name = "ChargingButton";
+            this.ChargingButton.Size = new System.Drawing.Size(189, 20);
+            this.ChargingButton.TabIndex = 3;
+            this.ChargingButton.Text = "Start\\Stop charging";
+            this.ChargingButton.UseVisualStyleBackColor = true;
+            this.ChargingButton.Click += new System.EventHandler(this.ChargingButton_Click);
+            // 
+            // CallsButton
+            // 
+            this.CallsButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.CallsButton.Location = new System.Drawing.Point(198, 3);
+            this.CallsButton.Name = "CallsButton";
+            this.CallsButton.Size = new System.Drawing.Size(190, 19);
+            this.CallsButton.TabIndex = 4;
+            this.CallsButton.Text = "View calls";
+            this.CallsButton.UseVisualStyleBackColor = true;
+            this.CallsButton.Click += new System.EventHandler(this.CallsButton_Click);
+            // 
+            // GenerateCallsButton
+            // 
+            this.GenerateCallsButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.GenerateCallsButton.Location = new System.Drawing.Point(3, 3);
+            this.GenerateCallsButton.Name = "GenerateCallsButton";
+            this.GenerateCallsButton.Size = new System.Drawing.Size(189, 19);
+            this.GenerateCallsButton.TabIndex = 5;
+            this.GenerateCallsButton.Text = "Generate calls";
+            this.GenerateCallsButton.UseVisualStyleBackColor = true;
+            this.GenerateCallsButton.Click += new System.EventHandler(this.GenerateCallsButton_Click);
             // 
             // MessageBox1
             // 
@@ -199,17 +239,6 @@ namespace WindowsFormsApplication
             this.ToDateTimePicker.TabIndex = 3;
             this.ToDateTimePicker.Leave += new System.EventHandler(this.ToDateTimePicker_Leave);
             // 
-            // MessagesListView
-            // 
-            this.MessagesListView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.MessagesListView.HideSelection = false;
-            this.MessagesListView.Location = new System.Drawing.Point(3, 234);
-            this.MessagesListView.Name = "MessagesListView";
-            this.MessagesListView.Size = new System.Drawing.Size(794, 535);
-            this.MessagesListView.TabIndex = 2;
-            this.MessagesListView.UseCompatibleStateImageBehavior = false;
-            this.MessagesListView.View = System.Windows.Forms.View.Tile;
-            // 
             // BatteryVolumeProgressBar
             // 
             this.BatteryVolumeProgressBar.Dock = System.Windows.Forms.DockStyle.Top;
@@ -220,21 +249,40 @@ namespace WindowsFormsApplication
             this.BatteryVolumeProgressBar.TabIndex = 4;
             this.BatteryVolumeProgressBar.Value = 100;
             // 
+            // MessagesListView
+            // 
+            this.MessagesListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.User,
+            this.Message,
+            this.Time});
+            this.MessagesListView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.MessagesListView.HideSelection = false;
+            this.MessagesListView.Location = new System.Drawing.Point(3, 234);
+            this.MessagesListView.Name = "MessagesListView";
+            this.MessagesListView.Size = new System.Drawing.Size(794, 535);
+            this.MessagesListView.TabIndex = 2;
+            this.MessagesListView.UseCompatibleStateImageBehavior = false;
+            this.MessagesListView.View = System.Windows.Forms.View.Tile;
+            // 
             // UpdateBatteryVolumeTimer
             // 
             this.UpdateBatteryVolumeTimer.Interval = 1000;
             this.UpdateBatteryVolumeTimer.Tick += new System.EventHandler(this.UpdateBatteryVolumeTimer_Tick);
             // 
-            // ChargingButton
+            // User
             // 
-            this.ChargingButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ChargingButton.Location = new System.Drawing.Point(3, 28);
-            this.ChargingButton.Name = "ChargingButton";
-            this.ChargingButton.Size = new System.Drawing.Size(189, 20);
-            this.ChargingButton.TabIndex = 3;
-            this.ChargingButton.Text = "Start\\Stop charging";
-            this.ChargingButton.UseVisualStyleBackColor = true;
-            this.ChargingButton.Click += new System.EventHandler(this.ChargingButton_Click);
+            this.User.Text = "User";
+            this.User.Width = 170;
+            // 
+            // Message
+            // 
+            this.Message.Text = "Message";
+            this.Message.Width = 150;
+            // 
+            // Time
+            // 
+            this.Time.Text = "Time";
+            this.Time.Width = 146;
             // 
             // MessageFormatting
             // 
@@ -273,5 +321,10 @@ namespace WindowsFormsApplication
         private System.Windows.Forms.ProgressBar BatteryVolumeProgressBar;
         private System.Windows.Forms.Timer UpdateBatteryVolumeTimer;
         private System.Windows.Forms.Button ChargingButton;
+        private System.Windows.Forms.Button CallsButton;
+        private System.Windows.Forms.Button GenerateCallsButton;
+        private System.Windows.Forms.ColumnHeader User;
+        private System.Windows.Forms.ColumnHeader Message;
+        private System.Windows.Forms.ColumnHeader Time;
     }
 }

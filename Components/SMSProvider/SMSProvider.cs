@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,6 +10,8 @@ namespace Components.Provider
     public class SMSProvider
     {
         public delegate void SMSRecievedDelegate(SimCorpMessage message);
+        public delegate void UpdateUsersDelegate(List<SimCorpMessage> messages);
+        public event UpdateUsersDelegate UpdateUsersEvent;
         private delegate string FormatDelegate(string text);
         private FormatDelegate Formatter = new FormatDelegate(StartWithTimeFormat);
         public delegate void MessageFormatDelegate(MessageFormat messageFormat);
@@ -19,16 +20,39 @@ namespace Components.Provider
         private readonly IOutput _output;
         public List<SimCorpMessage> MessagesCach = new List<SimCorpMessage>();
         private static List<string> Users = new List<string> { "User 1", "User 2", "User 3", "User 4" };
-        Thread MessageGeneratorThread = new Thread(GenerateMessage);
+        Thread MessageGeneratorThread = new Thread(GenerateMessageWithThread);
         public bool IsStoped => _isStoped;
         public static bool _isStoped = true;
-        public SMSProvider(IOutput output)
+        public SMSProvider(IOutput output, bool withThread)
         {
             _output = output;
             SMSReceived += OnSMSReceived;
             SetMessageFormatEvent += OnSetMessageFormat;
-            MessageGeneratorThread = new Thread(GenerateMessage);
+            if (withThread)
+            {
+                MessageGeneratorThread = new Thread(GenerateMessageWithThread);
+            }
+            else
+            {
+                GenerateMessageWithTask();
+            }
             MessageGeneratorThread.Start();
+        }
+        public List<string> GetFormatedMessages(List<SimCorpMessage> messages) 
+        {
+            List<string> formatedMessages = new List<string>();
+            foreach (var message in messages) 
+            {
+                if (Formatter != null)
+                {
+                    formatedMessages.Add(Formatter($" {message}"));
+                }
+                else 
+                {
+                    formatedMessages.Add(message.ToString());
+                }
+            }
+            return formatedMessages;
         }
         public void Start() 
         {
@@ -38,7 +62,21 @@ namespace Components.Provider
         {
             _isStoped = true;
         }
-        static void GenerateMessage()
+        private void GenerateMessageWithTask() 
+        {
+            Task.Run(async() => 
+            {
+                while (true)
+                {
+                    if (!_isStoped)
+                    {
+                        SendMessage(new SimCorpMessage(Users[new Random().Next(0, Users.Count())], "Message"));
+                        await Task.Delay(1000);
+                    }
+                }
+            });
+        }
+        static void GenerateMessageWithThread()
         {
             while(true)
             {
@@ -52,12 +90,7 @@ namespace Components.Provider
         private void OnSMSReceived(SimCorpMessage message)
         {
             MessagesCach.Add(message);
-            /*if (Formatter != null)
-            {
-                _output.WriteLine(Formatter($"{message}{Environment.NewLine}"));
-                return;
-            }
-            _output.WriteLine(message.ToString());*/
+            UpdateUsersEvent(MessagesCach);
         }
         private void OnSetMessageFormat(MessageFormat messageFormat)
         {
